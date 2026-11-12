@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de citas — CitasTaller{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Lista de citas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Carro</th>
+                <th>Modalidad</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in citas %}
+            <tr>
+                <td>{{ cita.id }}</td>
+                <td>{{ cita.fecha }}</td>
+                <td>{{ cita.hora or "—" }}</td>
+                <td>{{ cita.cliente_nombre or "—" }}</td>
+                <td>{{ cita.carro_descripcion }}</td>
+                <td>{{ cita.modalidad }}</td>
+                <td><span class="badge badge-{{ cita.estado }}">{{ cita.estado }}</span></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="text-align:center;">No hay citas registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="{{ url_for('citas.calendario') }}" class="btn btn-ghost">Volver al calendario</a></p>
+</div>
+{% endblock %}

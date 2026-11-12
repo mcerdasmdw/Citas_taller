@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva cita — CitasTaller{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Nueva cita de revisión</h2>
+    <p class="small">Ingrese los datos recibidos por WhatsApp. Los campos personales (nombre, teléfono, placa, dirección) son opcionales y se guardan solo localmente.</p>
+
+    <form method="POST" action="{{ url_for('citas.crear_cita') }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="required">Descripción del fallo</label>
+                <textarea name="fallo" required placeholder="Ej: El carro hace ruido al frenar">{{ request.form.fallo or '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label class="required">Modalidad</label>
+                <select name="modalidad" required>
+                    <option value="">Seleccione...</option>
+                    <option value="taller" {% if request.form.modalidad == 'taller' %}selected{% endif %}>Taller</option>
+                    <option value="domicilio" {% if request.form.modalidad == 'domicilio' %}selected{% endif %}>Domicilio</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="required">Fecha de la cita</label>
+                <input type="date" name="fecha" required value="{{ request.form.fecha or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Hora (opcional, 07:00–16:00)</label>
+                <input type="time" name="hora" value="{{ request.form.hora or '' }}">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Nombre del cliente (opcional)</label>
+                <input type="text" name="cliente_nombre" placeholder="Cliente" value="{{ request.form.cliente_nombre or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Teléfono (opcional)</label>
+                <input type="tel" name="cliente_telefono" placeholder="+506 0000-0000" value="{{ request.form.cliente_telefono or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Descripción del carro (opcional)</label>
+                <input type="text" name="carro_descripcion" placeholder="Toyota Corolla 2015" value="{{ request.form.carro_descripcion or '' }}">
+            </div>
+            <div class="form-group">
+                <label>Placa (opcional)</label>
+                <input type="text" name="placa" placeholder="PRB001" value="{{ request.form.placa or '' }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label id="label-direccion">Dirección (obligatoria si es domicilio)</label>
+            <input type="text" name="direccion" id="direccion" placeholder="Dirección de visita" value="{{ request.form.direccion or '' }}">
+        </div>
+
+        <div style="margin-top:1rem;">
+            <button type="submit" class="btn">Crear cita (propuesta)</button>
+            <a href="{{ url_for('citas.calendario') }}" class="btn btn-ghost">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    const selectModalidad = document.querySelector('select[name="modalidad"]');
+    const inputDireccion = document.getElementById('direccion');
+    const labelDireccion = document.getElementById('label-direccion');
+
+    function actualizarDireccion() {
+        const esDomicilio = selectModalidad && selectModalidad.value === 'domicilio';
+        if (esDomicilio) {
+            inputDireccion.required = true;
+            labelDireccion.textContent = 'Dirección (obligatoria para domicilio) *';
+        } else {
+            inputDireccion.required = false;
+            labelDireccion.textContent = 'Dirección (obligatoria si es domicilio)';
+        }
+    }
+
+    if (selectModalidad) {
+        selectModalidad.addEventListener('change', actualizarDireccion);
+        actualizarDireccion();
+    }
+</script>
+
+<div class="card">
+    <h2>Preparar con IA</h2>
+    <p class="small">El agente de IA interpreta solo información autorizada (sin datos personales) y prepara una propuesta que usted podrá revisar. No confirma la cita automáticamente.</p>
+
+    <form method="POST" action="{{ url_for('ia.preparar') }}">
+        <div class="form-group">
+            <label>Solicitud del cliente (texto de WhatsApp, sin nombres ni teléfonos)</label>
+            <textarea name="texto_solicitud" required placeholder="Ej: El carro hace ruido al frenar, puede llevarlo el miércoles">{{ session.texto_solicitud or '' }}</textarea>
+            <p class="small">Recuerde: no incluya nombres, teléfonos, placas ni direcciones.</p>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Modalidad (si está indicada)</label>
+                <select name="modalidad">
+                    <option value="">No indicado</option>
+                    <option value="taller">Taller</option>
+                    <option value="domicilio">Domicilio</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Preparar propuesta con IA</button>
+        <a href="{{ url_for('citas.formulario_nueva') }}" class="btn btn-ghost">Cancelar</a>
+    </form>
+
+    {% if session.propuesta_ia %}
+    <div class="propuesta-box">
+        <h3>Propuesta de IA (para revisión)</h3>
+        <div class="kv"><b>Carro:</b> {{ session.propuesta_ia.carro }}</div>
+        <div class="kv"><b>Fallo:</b> {{ session.propuesta_ia.fallo }}</div>
+        <div class="kv"><b>Disponibilidad cliente:</b> {{ session.propuesta_ia.disponibilidad_cliente }}</div>
+        <div class="kv"><b>Modalidad:</b> {{ session.propuesta_ia.modalidad }}</div>
+        <div class="kv"><b>Fecha propuesta:</b> {{ session.propuesta_ia.fecha_propuesta }}</div>
+        {% if session.propuesta_ia.datos_por_aclarar %}
+        <div class="kv"><b>Datos por aclarar:</b></div>
+        <ul>
+            {% for item in session.propuesta_ia.datos_por_aclarar %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <p class="small">Revise la propuesta. Puede copiar los datos al formulario de arriba y luego confirmar la cita.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

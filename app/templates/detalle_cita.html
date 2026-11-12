@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de cita #{{ cita.id }} — CitasTaller{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Detalle de cita #{{ cita.id }}</h2>
+    <table>
+        <tr><th>Fecha</th><td>{{ cita.fecha }}</td></tr>
+        <tr><th>Hora</th><td>{{ cita.hora or "—" }}</td></tr>
+        <tr><th>Cliente</th><td>{{ cita.cliente_nombre or "—" }}</td></tr>
+        <tr><th>Teléfono</th><td>{{ cita.cliente_telefono or "—" }}</td></tr>
+        <tr><th>Carro</th><td>{{ cita.carro_descripcion or "—" }}</td></tr>
+        <tr><th>Placa</th><td>{{ cita.placa or "—" }}</td></tr>
+        <tr><th>Fallo</th><td>{{ cita.fallo or "—" }}</td></tr>
+        <tr><th>Modalidad</th><td>{{ cita.modalidad or "—" }}</td></tr>
+        <tr><th>Dirección</th><td>{{ cita.direccion or "—" }}</td></tr>
+        <tr><th>Estado</th><td><span class="badge badge-{{ cita.estado }}">{{ cita.estado }}</span></td></tr>
+        <tr><th>Creado</th><td>{{ cita.creado_en }}</td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Acciones</h2>
+    {% if cita.estado == "propuesta" %}
+    <form method="POST" action="{{ url_for('citas.confirmar_cita', cita_id=cita.id) }}" style="display:inline;">
+        <button type="submit" class="btn btn-success">Confirmar cita</button>
+    </form>
+    {% elif cita.estado == "confirmada" %}
+    <form method="POST" action="{{ url_for('citas.cancelar_cita', cita_id=cita.id) }}" style="display:inline;" onsubmit="return confirm('¿Está seguro de cancelar esta cita? Se liberará su capacidad.')">
+        <button type="submit" class="btn btn-danger">Cancelar cita</button>
+    </form>
+    {% else %}
+    <span class="small">Para el estado "{{ cita.estado }}" no están disponibles las acciones de confirmar ni cancelar.</span>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('citas.cambiar_fecha', cita_id=cita.id) }}" style="display:inline; margin-left:1rem;">
+        <label for="fecha">Cambiar fecha:</label>
+        <input type="date" name="fecha" id="fecha" value="{{ cita.fecha }}">
+        <label for="hora" style="margin-left:0.5rem;">Hora:</label>
+        <input type="time" name="hora" id="hora" value="{{ cita.hora or '' }}">
+        <button type="submit" class="btn">Cambiar fecha</button>
+    </form>
+
+    <a href="{{ url_for('citas.calendario') }}" class="btn btn-ghost">Volver al calendario</a>
+</div>
+{% endblock %}

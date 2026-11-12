@@ -1,0 +1,15 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sqlite
+instance/
+.coverage
+.pytest_cache/
+.vscode/
+.idea/
+uv.lock
+insumos/
+contexto/

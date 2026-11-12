@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio — CitasTaller{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👋 Bienvenido a CitasTaller</h2>
+    <p>Sistema de control de citas de revisión de carros, para atención en el taller o a domicilio. Registre las solicitudes que recibe por WhatsApp, consulte la disponibilidad y confirme, cambie de fecha o cancele citas.</p>
+    <p class="small">Todo el flujo se gestiona desde esta computadora. Los datos de clientes, teléfonos, placas y direcciones se guardan solo localmente y no se envían a servicios de IA.</p>
+
+    <div class="inicio-grid">
+        <a href="{{ url_for('citas.calendario') }}" class="inicio-tarjeta">
+            <span class="icono">📅</span>
+            <h3>Calendario</h3>
+            <p>Vea las citas confirmadas y la disponibilidad por día.</p>
+        </a>
+        <a href="{{ url_for('citas.formulario_nueva') }}" class="inicio-tarjeta">
+            <span class="icono">➕</span>
+            <h3>Nueva cita</h3>
+            <p>Registre una solicitud de revisión como propuesta.</p>
+        </a>
+        <a href="{{ url_for('citas.lista_citas') }}" class="inicio-tarjeta">
+            <span class="icono">📋</span>
+            <h3>Lista de citas</h3>
+            <p>Consulte el listado completo de citas registradas.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

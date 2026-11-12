@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Propuesta de IA — CitasTaller{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Propuesta de IA</h2>
+    <p class="small">Esta propuesta fue generada por el agente de IA. Revise los datos antes de confirmar la cita. La IA no confirma citas automáticamente.</p>
+
+    <div class="propuesta-box">
+        <h3>Datos interpretados</h3>
+        <div class="kv"><b>Carro:</b> <span id="dato-carro">{{ propuesta.carro }}</span></div>
+        <div class="kv"><b>Fallo:</b> <span id="dato-fallo">{{ propuesta.fallo }}</span></div>
+        <div class="kv"><b>Disponibilidad cliente:</b> <span id="dato-disponibilidad">{{ propuesta.disponibilidad_cliente }}</span></div>
+        <div class="kv"><b>Modalidad:</b> <span id="dato-modalidad">{{ propuesta.modalidad }}</span></div>
+        <div class="kv"><b>Fecha propuesta:</b> <span id="dato-fecha">{{ propuesta.fecha_propuesta }}</span></div>
+        {% if propuesta.datos_por_aclarar %}
+        <div class="kv"><b>Datos por aclarar:</b></div>
+        <ul>
+            {% for item in propuesta.datos_por_aclarar %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="kv"><b>Datos por aclarar:</b> <span style="color:#86efac;">Ninguno</span></div>
+        {% endif %}
+    </div>
+
+    <p class="small">Puede copiar estos datos al portapapeles y pegarlos en el formulario de nueva cita, o ir directamente al formulario.</p>
+
+    <div style="margin-top:1rem;">
+        <button type="button" class="btn btn-success" onclick="copiarPropuesta()">📋 Copiar al formulario</button>
+        <a href="{{ url_for('citas.formulario_nueva') }}" class="btn">Ir al formulario</a>
+        <a href="{{ url_for('citas.calendario') }}" class="btn btn-ghost">Volver al calendario</a>
+    </div>
+</div>
+
+<script>
+function copiarPropuesta() {
+    const datos = {{ propuesta | tojson }};
+    const texto = [
+        "Carro: " + datos.carro,
+        "Fallo: " + datos.fallo,
+        "Disponibilidad cliente: " + datos.disponibilidad_cliente,
+        "Modalidad: " + datos.modalidad,
+        "Fecha propuesta: " + datos.fecha_propuesta,
+        "Datos por aclarar: " + (datos.datos_por_aclarar && datos.datos_por_aclarar.length ? datos.datos_por_aclarar.join(", ") : "Ninguno")
+    ].join("\n");
+    navigator.clipboard.writeText(texto).then(function() {
+        alert("Datos copiados al portapapeles. Peguelos en el formulario de nueva cita.");
+    }, function() {
+        alert("No se pudo copiar al portapapeles. Copie los datos manualmente.");
+    });
+}
+</script>
+{% endblock %}
