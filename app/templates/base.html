@@ -102,6 +102,12 @@
     <a href="{{ url_for('citas.calendario') }}" class="{% if request.endpoint == 'citas.calendario' %}active{% endif %}">Calendario</a>
     <a href="{{ url_for('citas.formulario_nueva') }}" class="{% if request.endpoint == 'citas.formulario_nueva' %}active{% endif %}">Nueva cita</a>
     <a href="{{ url_for('citas.lista_citas') }}" class="{% if request.endpoint == 'citas.lista_citas' %}active{% endif %}">Lista de citas</a>
+    {% if session.usuario %}
+        <span class="small">{{ session.usuario }}</span>
+        <form action="{{ url_for('auth.salir') }}" method="post" style="display: inline;">
+            <button type="submit" class="btn btn-ghost">Salir</button>
+        </form>
+    {% endif %}
 </nav>
 <main>
     {% with mensajes = get_flashed_messages(with_categories=true) %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar · CitasTaller</title>
+    <style>
+        /* Mismos tokens de color del fondo oscuro de base.html. */
+        :root {
+            --fondo: #0f172a;
+            --fondo-tarjeta: #1e293b;
+            --texto: #f1f5f9;
+            --texto-suave: #cbd5e1;
+            --acento: #38bdf8;
+            --acento-oscuro: #0ea5e9;
+            --borde: #334155;
+            --peligro: #ef4444;
+        }
+        * { box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background: var(--fondo); color: var(--texto); line-height: 1.5; display: flex; min-height: 100vh; align-items: center; justify-content: center; }
+        .caja-login { width: 100%; max-width: 400px; margin: 1.5rem; }
+        .cabecera { text-align: center; margin-bottom: 1.25rem; }
+        .cabecera img { height: 48px; width: 48px; }
+        .cabecera h1 { margin: 0.5rem 0 0; font-size: 1.5rem; letter-spacing: 0.5px; }
+        .cabecera p { margin: 0.25rem 0 0; font-size: 0.9rem; color: var(--texto-suave); }
+        .card { background: var(--fondo-tarjeta); border: 1px solid var(--borde); border-radius: 8px; padding: 1.5rem; }
+        .form-group { margin-bottom: 0.9rem; }
+        .form-group label { display: block; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.95rem; color: var(--texto); }
+        .form-group input { width: 100%; padding: 0.5rem; border: 1px solid var(--borde); border-radius: 4px; font-size: 0.95rem; background: var(--fondo); color: var(--texto); }
+        .form-group input:focus { outline: none; border-color: var(--acento); }
+        .btn { display: inline-block; background: var(--acento-oscuro); color: #fff; padding: 0.6rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.95rem; width: 100%; }
+        .btn:hover { background: var(--acento); }
+        .alert { padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.95rem; border: 1px solid; }
+        .alert-error { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: var(--peligro); }
+    </style>
+</head>
+<body>
+<div class="caja-login">
+    <div class="cabecera">
+        <img src="{{ url_for('static', filename='logo.svg') }}" alt="Logo CitasTaller">
+        <h1>📅 CitasTaller</h1>
+        <p>Ingresa tus datos para entrar</p>
+    </div>
+    <div class="card">
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <div class="alert alert-{{ categoria }}">{{ mensaje }}</div>
+            {% endfor %}
+        {% endwith %}
+        <form method="post" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label for="usuario">Usuario</label>
+                <input type="email" id="usuario" name="usuario" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="clave">Contraseña</label>
+                <input type="password" id="clave" name="clave" required>
+            </div>
+            <button type="submit" class="btn">Entrar</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

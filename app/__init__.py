@@ -50,8 +50,10 @@ def create_app():
         db.create_all()
 
     # Registrar controladores (rutas)
+    from app.controllers import auth as auth_controller
     from app.controllers import citas as citas_controller
     from app.controllers import ia as ia_controller
+    app.register_blueprint(auth_controller.bp)
     app.register_blueprint(citas_controller.bp)
     app.register_blueprint(ia_controller.bp)
 
