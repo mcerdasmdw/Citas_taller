@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: uv sync
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: FLASK_ENV
         value: production
