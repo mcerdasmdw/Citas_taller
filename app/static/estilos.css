@@ -576,6 +576,31 @@ body.cuerpo-login {
 .cabecera p { margin: 0.25rem 0 0; font-size: 0.9rem; color: var(--texto-suave); }
 .caja-login .card { padding: 1.5rem; }
 
+/* Campo con acción: botón para mostrar/ocultar la contraseña */
+.campo-con-accion { position: relative; }
+.campo-con-accion input { padding-right: 2.6rem; }
+.boton-ver-clave {
+    position: absolute;
+    top: 50%;
+    right: 0.45rem;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.3rem;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    color: var(--texto-suave);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+.boton-ver-clave:hover,
+.boton-ver-clave:focus-visible { color: var(--accion); background: var(--fondo-tarjeta); }
+.boton-ver-clave .icono-ocultar { display: none; }
+.boton-ver-clave[aria-pressed="true"] .icono-ver { display: none; }
+.boton-ver-clave[aria-pressed="true"] .icono-ocultar { display: block; }
+
 /* ============================================================
    Pie de página
    ============================================================ */
