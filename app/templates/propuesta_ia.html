@@ -22,13 +22,13 @@
             {% endfor %}
         </ul>
         {% else %}
-        <div class="kv"><b>Datos por aclarar:</b> <span style="color:#86efac;">Ninguno</span></div>
+        <div class="kv"><b>Datos por aclarar:</b> <span class="sin-observaciones">Ninguno</span></div>
         {% endif %}
     </div>
 
     <p class="small">Puede copiar estos datos al portapapeles y pegarlos en el formulario de nueva cita, o ir directamente al formulario.</p>
 
-    <div style="margin-top:1rem;">
+    <div class="acciones-linea" style="margin-top:1rem;">
         <button type="button" class="btn btn-success" onclick="copiarPropuesta()">📋 Copiar al formulario</button>
         <a href="{{ url_for('citas.formulario_nueva') }}" class="btn">Ir al formulario</a>
         <a href="{{ url_for('citas.calendario') }}" class="btn btn-ghost">Volver al calendario</a>

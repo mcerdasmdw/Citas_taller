@@ -3,36 +3,86 @@
 {% block title %}Lista de citas — CitasTaller{% endblock %}
 
 {% block content %}
+{% set total = citas|length %}
+{% set confirmadas = citas|selectattr('estado', 'equalto', 'confirmada')|list|length %}
+{% set pendientes = citas|selectattr('estado', 'equalto', 'propuesta')|list|length %}
+{% set canceladas = citas|selectattr('estado', 'equalto', 'cancelada')|list|length %}
+
 <div class="card">
     <h2>Lista de citas</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Cliente</th>
-                <th>Carro</th>
-                <th>Modalidad</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cita in citas %}
-            <tr>
-                <td>{{ cita.id }}</td>
-                <td>{{ cita.fecha }}</td>
-                <td>{{ cita.hora or "—" }}</td>
-                <td>{{ cita.cliente_nombre or "—" }}</td>
-                <td>{{ cita.carro_descripcion }}</td>
-                <td>{{ cita.modalidad }}</td>
-                <td><span class="badge badge-{{ cita.estado }}">{{ cita.estado }}</span></td>
-            </tr>
-            {% else %}
-            <tr><td colspan="7" style="text-align:center;">No hay citas registradas.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    <!-- Tablero de contadores grandes -->
+    <div class="contadores">
+        <div class="contador total">
+            <span class="numero">{{ total }}</span>
+            <span class="etiqueta">Total de citas</span>
+        </div>
+        <div class="contador confirmadas">
+            <span class="numero">{{ confirmadas }}</span>
+            <span class="etiqueta">Confirmadas</span>
+        </div>
+        <div class="contador pendientes">
+            <span class="numero">{{ pendientes }}</span>
+            <span class="etiqueta">Pendientes</span>
+        </div>
+        <div class="contador canceladas">
+            <span class="numero">{{ canceladas }}</span>
+            <span class="etiqueta">Canceladas</span>
+        </div>
+    </div>
+
+    <!-- Filtro de búsqueda (filtra sin recargar la página) -->
+    <div class="filtro-buscar">
+        <label for="buscadorLista">Buscar:</label>
+        <input type="text" id="buscadorLista" placeholder="Filtrar por fecha, cliente, carro, modalidad o estado..." oninput="filtrarLista()">
+    </div>
+
+    <div class="tabla-envoltura">
+        <table id="tablaLista">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Cliente</th>
+                    <th>Carro</th>
+                    <th>Modalidad</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cita in citas %}
+                <tr class="fila-lista">
+                    <td><a href="{{ url_for('citas.detalle_cita', cita_id=cita.id) }}">{{ cita.id }}</a></td>
+                    <td>{{ cita.fecha }}</td>
+                    <td>{{ cita.hora or "—" }}</td>
+                    <td>{{ cita.cliente_nombre or "—" }}</td>
+                    <td>{{ cita.carro_descripcion }}</td>
+                    <td>{{ cita.modalidad }}</td>
+                    <td><span class="badge badge-{{ cita.estado }}">{{ cita.estado }}</span></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" style="text-align:center;">No hay citas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     <p><a href="{{ url_for('citas.calendario') }}" class="btn btn-ghost">Volver al calendario</a></p>
 </div>
+
+<script>
+function filtrarLista() {
+    const texto = document.getElementById('buscadorLista').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaLista tbody tr.fila-lista');
+    filas.forEach(function(fila) {
+        const coincide = fila.textContent.toLowerCase().includes(texto);
+        if (coincide) {
+            fila.classList.remove('fila-oculta');
+        } else {
+            fila.classList.add('fila-oculta');
+        }
+    });
+}
+</script>
 {% endblock %}

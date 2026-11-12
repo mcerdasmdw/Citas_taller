@@ -1,0 +1,620 @@
+/* ============================================================
+   CitasTaller — tema "Noche de taller"
+   Hoja única de estilos de la app (el <style> de base.html vive aquí).
+   Sin CDNs, sin fuentes externas: todo local (regla de privacidad).
+   ============================================================ */
+
+:root {
+    /* Base oscura */
+    --fondo: #0f172a;
+    --fondo-tarjeta: #1e293b;
+    --fondo-barra: #0f172a;
+    --fondo-campo: #0b1220;
+    --borde: #334155;
+    --texto: #f1f5f9;
+    --texto-suave: #cbd5e1;
+
+    /* Acción: ámbar de taller */
+    --accion: #f59e0b;
+    --accion-hover: #fbbf24;
+    --accion-texto: #0f172a;
+    --accion-suave: rgba(245, 158, 11, 0.14);
+
+    /* Colores semánticos de estado */
+    --exito: #22c55e;          /* confirmada / completada */
+    --exito-claro: #86efac;
+    --ia: #a78bfa;             /* propuesta de IA */
+    --ia-claro: #ddd6fe;
+    --gris: #64748b;           /* cancelada */
+    --rojo: #ef4444;           /* errores / cancelar */
+    --rojo-claro: #fca5a5;
+    --azul: #3b82f6;           /* pendiente */
+    --azul-claro: #bfdbfe;
+    --naranja: #f97316;        /* en_proceso */
+    --naranja-claro: #fdba74;
+
+    --radio: 10px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--fondo);
+    color: var(--texto);
+    line-height: 1.5;
+}
+
+h1, h2, h3 { letter-spacing: -0.015em; }
+h2 { font-weight: 700; }
+h3 { font-weight: 700; }
+
+input, select, textarea, button { font-family: inherit; }
+td, th, .numero, .bahia-fecha { font-variant-numeric: tabular-nums; }
+
+a { color: var(--accion); }
+
+/* --- Foco visible accesible (anillo ámbar) ------------------ */
+*:focus { outline: none; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.tarjeta-modalidad input:focus-visible + .tm-cuerpo {
+    outline: 3px solid var(--accion);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* ============================================================
+   Letrero del taller (header) + nav tipo tablerito
+   ============================================================ */
+header.letrero {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.75rem;
+    border-bottom: 1px solid var(--borde);
+    background: linear-gradient(180deg, #13203c 0%, var(--fondo-barra) 100%);
+}
+header.letrero .logo {
+    height: 46px;
+    width: 46px;
+    border-radius: 10px;
+    flex: none;
+}
+header.letrero h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--texto);
+}
+header.letrero p {
+    margin: 0.1rem 0 0;
+    font-size: 0.85rem;
+    color: var(--texto-suave);
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.75rem;
+    border-bottom: 1px solid var(--borde);
+    background: var(--fondo-barra);
+}
+.nav-tab {
+    color: var(--texto-suave);
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+.nav-tab:hover {
+    color: var(--texto);
+    background: var(--fondo-tarjeta);
+    border-color: var(--borde);
+}
+.nav-tab.active {
+    color: var(--accion);
+    background: var(--accion-suave);
+    border-color: var(--accion);
+    font-weight: 700;
+}
+.nav-usuario {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+.nav-correo {
+    color: var(--texto-suave);
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+    background: var(--fondo-tarjeta);
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Área principal y tarjetas
+   ============================================================ */
+main {
+    max-width: 1080px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+}
+.card {
+    background: var(--fondo-tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+.card h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: var(--accion);
+    border-bottom: 2px solid var(--borde);
+    padding-bottom: 0.5rem;
+}
+.card .compacta, .caja-resultado { padding: 1rem; }
+
+/* ============================================================
+   Botones
+   ============================================================ */
+.btn {
+    display: inline-block;
+    background: var(--accion);
+    color: var(--accion-texto);
+    padding: 0.55rem 1.05rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, color 0.15s ease;
+}
+.btn:hover { background: var(--accion-hover); color: var(--accion-texto); }
+.btn:active { transform: translateY(1px); }
+.btn-success { background: var(--exito); color: #052e16; }
+.btn-success:hover { background: #16a34a; color: #052e16; }
+.btn-danger { background: #dc2626; color: #fff; }
+.btn-danger:hover { background: var(--rojo); color: #fff; }
+.btn-ghost { background: transparent; color: var(--texto-suave); border: 1px solid var(--borde); }
+.btn-ghost:hover { background: var(--fondo-tarjeta); color: var(--texto); border-color: var(--accion); }
+.btn-chica { padding: 0.3rem 0.6rem; font-size: 0.85rem; margin-bottom: 0; }
+.btn-bloque { width: 100%; }
+
+/* ============================================================
+   Formularios
+   ============================================================ */
+.form-group { margin-bottom: 0.9rem; }
+.form-group label, .form-group .label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--texto);
+}
+.form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--fondo-campo);
+    color: var(--texto);
+    transition: border-color 0.15s ease;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accion);
+}
+.form-group textarea { min-height: 90px; resize: vertical; }
+.form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+.form-row > .form-group { flex: 1; min-width: 200px; }
+.required::after { content: " *"; color: var(--rojo-claro); }
+.small { font-size: 0.85rem; color: var(--texto-suave); }
+
+/* Secciones del formulario de cita */
+.seccion-form {
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 1rem 1rem 1.15rem;
+    margin-bottom: 1rem;
+    background: rgba(15, 23, 42, 0.35);
+}
+.seccion-form h3 {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+    color: var(--texto);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.seccion-form h3 .seccion-icono { font-size: 1.15rem; }
+
+/* Modalidad como dos tarjetas radio (taller | domicilio) */
+fieldset.tarjetas-fieldset {
+    border: none;
+    margin: 0 0 0.9rem;
+    padding: 0;
+}
+fieldset.tarjetas-fieldset legend { padding: 0; font-weight: 600; margin-bottom: 0.4rem; }
+.tarjetas-modalidad {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+}
+.tarjeta-modalidad { cursor: pointer; position: relative; }
+.tarjeta-modalidad input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.tm-cuerpo {
+    display: block;
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio);
+    background: var(--fondo-campo);
+    padding: 0.8rem;
+    text-align: center;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.tm-icono { display: block; font-size: 1.6rem; margin-bottom: 0.3rem; }
+.tm-titulo { display: block; font-weight: 800; letter-spacing: -0.01em; color: var(--texto); }
+.tm-nota { display: block; font-size: 0.8rem; color: var(--texto-suave); margin-top: 0.2rem; }
+.tarjeta-modalidad input:checked + .tm-cuerpo {
+    border-color: var(--accion);
+    background: var(--accion-suave);
+}
+.tarjeta-modalidad:hover .tm-cuerpo { border-color: var(--accion-hover); }
+
+/* ============================================================
+   Tablas
+   ============================================================ */
+.tabla-envoltura { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+th, td {
+    border: 1px solid var(--borde);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--texto);
+}
+th {
+    background: var(--fondo-campo);
+    color: var(--texto-suave);
+    font-weight: 700;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+tbody tr:nth-child(even) { background: rgba(148, 163, 184, 0.05); }
+tbody tr { transition: background-color 0.15s ease; }
+tbody tr:hover { background: var(--accion-suave); }
+
+/* ============================================================
+   Badges de estado (pastilla con punto semántico)
+   ============================================================ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.16rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: 1px solid;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+.badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+}
+.badge-confirmada, .badge-completada { color: var(--exito-claro); background: rgba(34, 197, 94, 0.14); border-color: rgba(34, 197, 94, 0.55); }
+.badge-propuesta { color: var(--ia-claro); background: rgba(167, 139, 250, 0.15); border-color: rgba(167, 139, 250, 0.55); }
+.badge-cancelada { color: var(--texto-suave); background: rgba(100, 116, 139, 0.2); border-color: rgba(100, 116, 139, 0.7); }
+.badge-pendiente { color: var(--azul-claro); background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.55); }
+.badge-en_proceso { color: var(--naranja-claro); background: rgba(249, 115, 22, 0.15); border-color: rgba(249, 115, 22, 0.55); }
+.badge-no_asistio { color: var(--rojo-claro); background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.55); }
+
+/* ============================================================
+   Avisos (flash)
+   ============================================================ */
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    border: 1px solid;
+}
+.alert-success { background: rgba(34, 197, 94, 0.15); color: var(--exito-claro); border-color: var(--exito); }
+.alert-error { background: rgba(239, 68, 68, 0.15); color: var(--rojo-claro); border-color: var(--rojo); }
+.alert-info { background: rgba(245, 158, 11, 0.12); color: #fde68a; border-color: rgba(245, 158, 11, 0.6); }
+
+/* ============================================================
+   Tablero de contadores grandes
+   ============================================================ */
+.contadores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0 1.5rem;
+}
+.contador {
+    background: var(--fondo-tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 1.1rem 1rem;
+    text-align: center;
+    border-top: 3px solid var(--borde);
+}
+.contador .numero {
+    display: block;
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+.contador .etiqueta { display: block; font-size: 0.85rem; color: var(--texto-suave); margin-top: 0.3rem; }
+.contador.total { border-top-color: var(--accion); }
+.contador.total .numero { color: var(--accion); }
+.contador.confirmadas { border-top-color: var(--exito); }
+.contador.confirmadas .numero { color: #4ade80; }
+.contador.pendientes { border-top-color: var(--ia); }
+.contador.pendientes .numero { color: var(--ia); }
+.contador.canceladas { border-top-color: var(--gris); }
+.contador.canceladas .numero { color: var(--texto-suave); }
+
+/* ============================================================
+   Filtro de búsqueda
+   ============================================================ */
+.filtro-buscar { margin: 0.5rem 0 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.filtro-buscar label { font-weight: 600; color: var(--texto-suave); font-size: 0.9rem; }
+.filtro-buscar input {
+    flex: 1;
+    width: 100%;
+    max-width: 420px;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--fondo-campo);
+    color: var(--texto);
+    transition: border-color 0.15s ease;
+}
+.filtro-buscar input:focus { border-color: var(--accion); }
+.fila-oculta { display: none !important; }
+
+/* ============================================================
+   Calendario: bahías de servicio
+   ============================================================ */
+.bahias {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.bahia {
+    background: var(--fondo-tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: border-color 0.15s ease;
+}
+.bahia:hover { border-color: rgba(245, 158, 11, 0.6); }
+.bahia-cabecera { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.bahia-fecha { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; }
+.bahia-etiqueta {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--borde);
+    color: var(--texto-suave);
+    background: var(--fondo-campo);
+}
+.etiqueta-visita {
+    color: var(--accion-texto);
+    background: var(--accion);
+    border-color: var(--accion);
+}
+.bahia-completa { border-color: rgba(245, 158, 11, 0.5); }
+
+/* Franja de peligro (bahía / día completo) */
+.franja-peligro {
+    display: block;
+    height: 8px;
+    border-radius: 4px;
+    background: repeating-linear-gradient(45deg, var(--accion) 0 8px, #16223b 8px 16px);
+}
+
+.bahia-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.slot {
+    min-height: 58px;
+    border-radius: 8px;
+    border: 1.5px dashed var(--borde);
+    background: rgba(148, 163, 184, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1rem;
+    font-size: 0.78rem;
+    color: var(--texto-suave);
+    text-align: center;
+    padding: 0.3rem;
+    overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.slot-ocupado {
+    border-style: solid;
+    border-color: rgba(34, 197, 94, 0.55);
+    background: rgba(34, 197, 94, 0.14);
+    color: var(--exito-claro);
+    font-weight: 700;
+}
+.slot-visita {
+    border-style: solid;
+    border-color: var(--accion);
+    background: repeating-linear-gradient(135deg, rgba(245, 158, 11, 0.35) 0 10px, rgba(15, 23, 42, 0.65) 10px 20px);
+    color: #fde68a;
+    font-weight: 800;
+}
+.slot-hora { font-variant-numeric: tabular-nums; }
+.bahia-resumen { margin: 0; }
+.bahia-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.14rem 0.55rem;
+    border-radius: 999px;
+    text-decoration: none;
+    border: 1px solid;
+    transition: border-color 0.15s ease;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.chip-taller { color: var(--exito-claro); border-color: rgba(34, 197, 94, 0.45); background: rgba(34, 197, 94, 0.1); }
+.chip-visita { color: #fde68a; border-color: rgba(245, 158, 11, 0.55); background: var(--accion-suave); }
+.chip-propuesta { color: var(--ia-claro); border-color: rgba(167, 139, 250, 0.5); background: rgba(167, 139, 250, 0.12); }
+.chip:hover { border-color: var(--accion); }
+.bahia-agendar { font-size: 0.85rem; font-weight: 700; text-decoration: none; color: var(--accion); }
+.bahia-agendar:hover { color: var(--accion-hover); text-decoration: underline; }
+
+.disponibilidad { font-weight: 700; color: var(--accion); }
+.caja-resultado {
+    background: var(--fondo-campo);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 1rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   Caja de propuesta de IA (identidad violeta)
+   ============================================================ */
+.propuesta-box {
+    background: rgba(167, 139, 250, 0.1);
+    border: 1px solid rgba(167, 139, 250, 0.45);
+    border-left: 4px solid var(--ia);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+.propuesta-box h3 { margin-top: 0; color: var(--ia-claro); }
+.propuesta-box .kv { margin: 0.4rem 0; font-size: 0.95rem; }
+.propuesta-box .kv b { color: var(--ia-claro); }
+.propuesta-box ul { margin: 0.4rem 0 0; padding-left: 1.2rem; color: var(--ia-claro); }
+.sin-observaciones { color: var(--exito-claro); }
+
+/* ============================================================
+   Pantalla de inicio
+   ============================================================ */
+.inicio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.inicio-tarjeta {
+    background: var(--fondo-tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio);
+    padding: 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--texto);
+    display: block;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.inicio-tarjeta:hover { border-color: var(--accion); background: rgba(30, 41, 59, 0.8); }
+.inicio-tarjeta .icono { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+.inicio-tarjeta h3 { margin: 0 0 0.5rem; color: var(--accion); }
+.inicio-tarjeta p { margin: 0; font-size: 0.9rem; color: var(--texto-suave); }
+
+/* ============================================================
+   Login: tarjeta centrada sobre cuadrícula de banco de trabajo
+   ============================================================ */
+body.cuerpo-login {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image:
+        linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+        radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08), transparent 60%);
+    background-size: 28px 28px, 28px 28px, auto;
+}
+.caja-login { width: 100%; max-width: 400px; margin: 1.5rem; }
+.cabecera { text-align: center; margin-bottom: 1.25rem; }
+.cabecera img { height: 52px; width: 52px; border-radius: 12px; }
+.cabecera h1 { margin: 0.5rem 0 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+.cabecera p { margin: 0.25rem 0 0; font-size: 0.9rem; color: var(--texto-suave); }
+.caja-login .card { padding: 1.5rem; }
+
+/* ============================================================
+   Pie de página
+   ============================================================ */
+footer {
+    padding: 1.5rem 2rem;
+    color: var(--texto-suave);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--borde);
+    margin-top: 2rem;
+}
+
+/* Líneas de formulario en una sola línea (Salir, cambiar fecha) */
+.form-en-linea { display: inline-flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0; }
+.acciones-linea { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.acciones-linea .form-group { min-width: 170px; margin: 0; }
+.card h2 .badge { margin-left: 0.6rem; vertical-align: middle; }
+
+/* ============================================================
+   Responsive hasta 360 px
+   ============================================================ */
+@media (max-width: 640px) {
+    header.letrero { padding: 0.9rem 1rem; }
+    nav { padding: 0.5rem 1rem; }
+    main { margin: 1rem auto; padding: 0 0.75rem; }
+    .contadores { grid-template-columns: repeat(2, 1fr); }
+    .bahias { grid-template-columns: 1fr; }
+    .nav-usuario { margin-left: 0; width: 100%; }
+    .filtro-buscar input { max-width: none; }
+    th, td { padding: 0.45rem 0.55rem; font-size: 0.85rem; }
+}
+
+/* ============================================================
+   Movimiento: respetar prefers-reduced-motion
+   (transiciones cortas 150 ms ya declaradas; aquí se apagan)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+    .btn:active { transform: none; }
+}

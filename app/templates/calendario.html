@@ -31,62 +31,141 @@
             <span class="etiqueta">Canceladas</span>
         </div>
     </div>
+</div>
 
-    <!-- Filtro de búsqueda (filtra sin recargar la página) -->
-    <div class="filtro-buscar">
-        <label for="buscadorCitas" style="font-weight:600; color:var(--texto-suave); font-size:0.9rem;">Buscar:</label>
-        <input type="text" id="buscadorCitas" placeholder="Filtrar por fecha, cliente, carro, fallo, modalidad o estado..." oninput="filtrarCitas()">
-    </div>
+<!-- Bahías de servicio: una tarjeta por día con citas registradas -->
+<div class="card">
+    <h2>Bahías de servicio</h2>
+    <p class="small">Cada día tiene dos bahías para carros de taller. Una visita a domicilio ocupa el día entero. Las propuestas sin confirmar no consumen espacio.</p>
 
-    <table id="tablaCitas">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Cliente</th>
-                <th>Carro</th>
-                <th>Fallo</th>
-                <th>Modalidad</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cita in citas %}
-            <tr class="fila-cita">
-                <td>{{ cita.fecha }}</td>
-                <td>{{ cita.hora or "—" }}</td>
-                <td>{{ cita.cliente_nombre or "—" }}</td>
-                <td>{{ cita.carro_descripcion }}</td>
-                <td>{{ cita.fallo[:40] }}{% if cita.fallo|length > 40 %}...{% endif %}</td>
-                <td>{{ cita.modalidad }}</td>
-                <td><span class="badge badge-{{ cita.estado }}">{{ cita.estado }}</span></td>
-                <td>
-                    <a href="{{ url_for('citas.detalle_cita', cita_id=cita.id) }}" class="btn btn-ghost" style="padding:0.3rem 0.6rem;font-size:0.85rem;">Ver</a>
-                    {% if cita.estado == "confirmada" %}
-                    <form method="POST" action="{{ url_for('citas.cancelar_cita', cita_id=cita.id) }}" style="display:inline;" onsubmit="return confirm('¿Cancelar esta cita? Se liberará su capacidad.')">
-                        <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.6rem;font-size:0.85rem;">Cancelar</button>
-                    </form>
+    {% set bahias = {} %}
+    {% for cita in citas %}
+        {% set _ = bahias.setdefault(cita.fecha, []).append(cita) %}
+    {% endfor %}
+
+    {% if bahias %}
+    <div class="bahias">
+        {% for fecha in bahias|sort %}
+            {% set del_dia = bahias[fecha] %}
+            {% set talleres = del_dia|selectattr('estado', 'equalto', 'confirmada')|selectattr('modalidad', 'equalto', 'taller')|list %}
+            {% set visitas = del_dia|selectattr('estado', 'equalto', 'confirmada')|selectattr('modalidad', 'equalto', 'domicilio')|list %}
+            {% set propuestas = del_dia|selectattr('estado', 'equalto', 'propuesta')|list %}
+            {% set completo = (visitas|length > 0) or (talleres|length >= 2) %}
+            <div class="bahia{% if visitas %} bahia-visita{% endif %}{% if completo %} bahia-completa{% endif %}">
+                <div class="bahia-cabecera">
+                    <span class="bahia-fecha">{{ fecha }}</span>
+                    {% if visitas %}<span class="bahia-etiqueta etiqueta-visita">Visita</span>{% endif %}
+                </div>
+                {% if completo %}<span class="franja-peligro" aria-hidden="true"></span>{% endif %}
+                <div class="bahia-slots" role="group" aria-label="Capacidad del día {{ fecha }}: {% if visitas %}visita a domicilio, día completo{% else %}{{ talleres|length }} de 2 bahías de taller ocupadas{% endif %}">
+                    {% for i in [1, 2] %}
+                        {% if visitas %}
+                            <span class="slot slot-visita">Visita</span>
+                        {% elif talleres|length >= i %}
+                            {% set ocupada = talleres[i - 1] %}
+                            <span class="slot slot-ocupado" title="{{ ocupada.carro_descripcion }}">
+                                <span aria-hidden="true">🚗</span>
+                                <span class="slot-hora">{{ ocupada.hora or "Taller" }}</span>
+                            </span>
+                        {% else %}
+                            <span class="slot slot-libre">Libre</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="bahia-resumen small">
+                    {% if visitas %}
+                        Día completo (visita a domicilio).
+                    {% elif talleres|length == 2 %}
+                        Día completo (2 carros de taller).
+                    {% elif talleres|length == 1 %}
+                        Queda 1 espacio de taller; no disponible domicilio.
+                    {% else %}
+                        Día disponible: 2 talleres o 1 domicilio.
                     {% endif %}
-                </td>
-            </tr>
-            {% else %}
-            <tr><td colspan="8" style="text-align:center;">No hay citas registradas.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    {% if propuestas %} · {{ propuestas|length }} propuesta(s) por confirmar.{% endif %}
+                </p>
+                <div class="bahia-chips">
+                    {% for c in talleres %}
+                        <a class="chip chip-taller" href="{{ url_for('citas.detalle_cita', cita_id=c.id) }}" title="{{ c.carro_descripcion }}">🔧 {{ c.carro_descripcion|truncate(26, true) }}</a>
+                    {% endfor %}
+                    {% for v in visitas %}
+                        <a class="chip chip-visita" href="{{ url_for('citas.detalle_cita', cita_id=v.id) }}" title="{{ v.carro_descripcion }}">🏠 {{ v.carro_descripcion|truncate(26, true) }}</a>
+                    {% endfor %}
+                    {% for p in propuestas %}
+                        <a class="chip chip-propuesta" href="{{ url_for('citas.detalle_cita', cita_id=p.id) }}" title="{{ p.carro_descripcion }}">📝 {{ p.carro_descripcion|truncate(26, true) }}</a>
+                    {% endfor %}
+                </div>
+                {% if not completo %}
+                    <a class="bahia-agendar" href="{{ url_for('citas.formulario_nueva', fecha=fecha) }}">Agendar aquí →</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="small">Aún no hay citas registradas. Use “Nueva cita” para comenzar.</p>
+    {% endif %}
 </div>
 
 <div class="card">
-    <h2>Disponibilidad por fecha</h2>
-    <form class="form-row" style="margin-bottom:1rem;">
-        <div class="form-group" style="min-width:150px;">
-            <label>Consultar fecha</label>
+    <h2>Todas las citas</h2>
+
+    <!-- Filtro de búsqueda (filtra sin recargar la página) -->
+    <div class="filtro-buscar">
+        <label for="buscadorCitas">Buscar:</label>
+        <input type="text" id="buscadorCitas" placeholder="Filtrar por fecha, cliente, carro, fallo, modalidad o estado..." oninput="filtrarCitas()">
+    </div>
+
+    <div class="tabla-envoltura">
+        <table id="tablaCitas">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Cliente</th>
+                    <th>Carro</th>
+                    <th>Fallo</th>
+                    <th>Modalidad</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cita in citas %}
+                <tr class="fila-cita">
+                    <td>{{ cita.fecha }}</td>
+                    <td>{{ cita.hora or "—" }}</td>
+                    <td>{{ cita.cliente_nombre or "—" }}</td>
+                    <td>{{ cita.carro_descripcion }}</td>
+                    <td>{{ cita.fallo[:40] }}{% if cita.fallo|length > 40 %}...{% endif %}</td>
+                    <td>{{ cita.modalidad }}</td>
+                    <td><span class="badge badge-{{ cita.estado }}">{{ cita.estado }}</span></td>
+                    <td>
+                        <a href="{{ url_for('citas.detalle_cita', cita_id=cita.id) }}" class="btn btn-ghost btn-chica">Ver</a>
+                        {% if cita.estado == "confirmada" %}
+                        <form method="POST" action="{{ url_for('citas.cancelar_cita', cita_id=cita.id) }}" class="form-en-linea" onsubmit="return confirm('¿Cancelar esta cita? Se liberará su capacidad.')">
+                            <button type="submit" class="btn btn-danger btn-chica">Cancelar</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="8" style="text-align:center;">No hay citas registradas.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Consultar disponibilidad</h2>
+    <div class="form-row" style="margin-bottom:1rem;">
+        <div class="form-group" style="min-width:150px; max-width:220px;">
+            <label for="fechaConsulta">Fecha a consultar</label>
             <input type="date" name="fecha" id="fechaConsulta">
         </div>
         <button type="button" class="btn" onclick="consultarDisponibilidad()">Consultar</button>
-    </form>
-    <div id="resultadoDisponibilidad" class="card" style="padding:1rem;"></div>
+    </div>
+    <div id="resultadoDisponibilidad" class="caja-resultado">Seleccione una fecha y pulse “Consultar”.</div>
 </div>
 
 <script>

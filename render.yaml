@@ -23,6 +23,12 @@ services:
         sync: false
       - key: IA_MODEL
         value: pendiente
+      # Credenciales del usuario unico (login). El valor se define en el panel
+      # de Render al crear/actualizar el servicio; nunca se sube a Git.
+      - key: APP_USUARIO
+        sync: false
+      - key: APP_CLAVE
+        sync: false
     # Los persistent disks NO estan disponibles en el plan free de Render.
     # Para mantener datos entre despliegues, paga un plan y descomenta:
     # disk:

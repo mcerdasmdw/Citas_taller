@@ -4,110 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CitasTaller{% endblock %}</title>
-    <style>
-        :root {
-            --fondo: #0f172a;
-            --fondo-tarjeta: #1e293b;
-            --fondo-barra: #0f172a;
-            --texto: #f1f5f9;
-            --texto-suave: #cbd5e1;
-            --acento: #38bdf8;
-            --acento-oscuro: #0ea5e9;
-            --borde: #334155;
-            --exito: #22c55e;
-            --peligro: #ef4444;
-            --aviso: #f59e0b;
-        }
-        * { box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background: var(--fondo); color: var(--texto); line-height: 1.5; }
-        header { background: var(--fondo-barra); color: #fff; padding: 1rem 2rem; border-bottom: 1px solid var(--borde); }
-        header .logo { height: 32px; width: 32px; vertical-align: middle; margin-right: 0.75rem; }
-        header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 0.5px; }
-        header p { margin: 0.25rem 0 0; font-size: 0.9rem; color: var(--texto-suave); }
-        nav { background: var(--fondo-barra); padding: 0.6rem 2rem; border-bottom: 1px solid var(--borde); }
-        nav a { color: var(--texto-suave); text-decoration: none; margin-right: 1.5rem; font-size: 0.95rem; padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid transparent; }
-        nav a:hover { color: #fff; background: #1e293b; border-color: var(--borde); }
-        nav a.active { color: var(--acento); background: rgba(56,189,248,0.1); border-color: var(--acento); font-weight: bold; }
-        main { max-width: 980px; margin: 1.5rem auto; padding: 0 1rem; }
-        .card { background: var(--fondo-tarjeta); border: 1px solid var(--borde); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem; }
-        .card h2 { margin-top: 0; font-size: 1.25rem; color: var(--acento); border-bottom: 2px solid var(--borde); padding-bottom: 0.5rem; }
-        .btn { display: inline-block; background: var(--acento-oscuro); color: #fff; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.95rem; text-decoration: none; margin-right: 0.5rem; margin-bottom: 0.5rem; }
-        .btn:hover { background: var(--acento); }
-        .btn-success { background: var(--exito); }
-        .btn-success:hover { background: #15803d; }
-        .btn-danger { background: var(--peligro); }
-        .btn-danger:hover { background: #b91c1c; }
-        .btn-ghost { background: transparent; color: var(--texto-suave); border: 1px solid var(--borde); }
-        .btn-ghost:hover { background: #1e293b; color: #fff; border-color: var(--texto-suave); }
-        .form-group { margin-bottom: 0.9rem; }
-        .form-group label { display: block; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.95rem; color: var(--texto); }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.5rem; border: 1px solid var(--borde); border-radius: 4px; font-size: 0.95rem; background: var(--fondo); color: var(--texto); }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--acento); }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .form-row > .form-group { flex: 1; min-width: 200px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        th, td { border: 1px solid var(--borde); padding: 0.6rem 0.8rem; text-align: left; font-size: 0.9rem; color: var(--texto); }
-        th { background: var(--fondo-barra); color: var(--texto-suave); }
-        tr:nth-child(even) { background: #111827; }
-        tr:hover { background: rgba(56,189,248,0.05); }
-        .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.8rem; font-weight: bold; color: #fff; }
-        .badge-confirmada { background: var(--exito); }
-        .badge-propuesta { background: var(--aviso); }
-        .badge-cancelada { background: #64748b; }
-        .badge-pendiente { background: #3b82f6; }
-        .badge-en_proceso { background: #f97316; }
-        .badge-completada { background: var(--exito); }
-        .badge-no_asistio { background: var(--peligro); }
-        .alert { padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.95rem; border: 1px solid; }
-        .alert-success { background: rgba(34,197,94,0.15); color: #86efac; border-color: #22c55e; }
-        .alert-error { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: #ef4444; }
-        .alert-info { background: rgba(56,189,248,0.15); color: #7dd3fc; border-color: #38bdf8; }
-        .propuesta-box { background: rgba(139,92,246,0.1); border: 1px solid #8b5cf6; border-radius: 6px; padding: 1rem; margin-top: 1rem; }
-        .propuesta-box h3 { margin-top: 0; color: #c4b5fd; }
-        .propuesta-box .kv { margin: 0.4rem 0; font-size: 0.95rem; }
-        .propuesta-box .kv b { color: #c4b5fd; }
-        .propuesta-box ul { margin: 0.4rem 0 0; padding-left: 1.2rem; color: #c4b5fd; }
-        .disponibilidad { font-weight: bold; color: var(--acento); }
-        footer { padding: 1.5rem 2rem; color: var(--texto-suave); font-size: 0.85rem; border-top: 1px solid var(--borde); margin-top: 2rem; }
-        .small { font-size: 0.85rem; color: var(--texto-suave); }
-        .required::after { content: " *"; color: var(--peligro); }
-        .inicio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
-        .inicio-tarjeta { background: var(--fondo-tarjeta); border: 1px solid var(--borde); border-radius: 8px; padding: 1.5rem; text-align: center; text-decoration: none; color: var(--texto); display: block; }
-        .inicio-tarjeta:hover { border-color: var(--acento); background: rgba(30,41,59,0.8); }
-        .inicio-tarjeta .icono { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
-        .inicio-tarjeta h3 { margin: 0 0 0.5rem; color: var(--acento); }
-        .inicio-tarjeta p { margin: 0; font-size: 0.9rem; color: var(--texto-suave); }
-        .contadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .contador { background: var(--fondo-tarjeta); border: 1px solid var(--borde); border-radius: 8px; padding: 1.25rem 1rem; text-align: center; }
-        .contador .numero { display: block; font-size: 2.25rem; font-weight: bold; }
-        .contador .etiqueta { display: block; font-size: 0.9rem; color: var(--texto-suave); margin-top: 0.25rem; }
-        .contador.total .numero { color: var(--acento); }
-        .contador.confirmadas .numero { color: var(--exito); }
-        .contador.pendientes .numero { color: var(--aviso); }
-        .contador.canceladas .numero { color: var(--peligro); }
-        .filtro-buscar { margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-        .filtro-buscar input { width: 100%; max-width: 420px; padding: 0.55rem 0.9rem; border: 1px solid var(--borde); border-radius: 4px; font-size: 0.95rem; background: var(--fondo); color: var(--texto); }
-        .filtro-buscar input:focus { outline: none; border-color: var(--acento); }
-        .fila-oculta { display: none !important; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
 </head>
 <body>
-<header>
+<header class="letrero">
     <img src="{{ url_for('static', filename='logo.svg') }}" alt="Logo CitasTaller" class="logo">
-    <h1>📅 CitasTaller</h1>
-    <p>Control de citas de revisión de carros — Taller y Domicilio</p>
+    <div>
+        <h1>CitasTaller</h1>
+        <p>Control de citas de revisión de carros — Taller y Domicilio</p>
+    </div>
 </header>
-<nav>
-    <a href="{{ url_for('citas.calendario') }}" class="{% if request.endpoint == 'citas.calendario' %}active{% endif %}">Calendario</a>
-    <a href="{{ url_for('citas.formulario_nueva') }}" class="{% if request.endpoint == 'citas.formulario_nueva' %}active{% endif %}">Nueva cita</a>
-    <a href="{{ url_for('citas.lista_citas') }}" class="{% if request.endpoint == 'citas.lista_citas' %}active{% endif %}">Lista de citas</a>
-    {% if session.usuario %}
-        <span class="small">{{ session.usuario }}</span>
-        <form action="{{ url_for('auth.salir') }}" method="post" style="display: inline;">
-            <button type="submit" class="btn btn-ghost">Salir</button>
-        </form>
-    {% endif %}
+<nav aria-label="Navegación principal">
+    <a href="{{ url_for('citas.calendario') }}" class="nav-tab {% if request.endpoint == 'citas.calendario' %}active{% endif %}">🗓️ Calendario</a>
+    <a href="{{ url_for('citas.formulario_nueva') }}" class="nav-tab {% if request.endpoint == 'citas.formulario_nueva' %}active{% endif %}">➕ Nueva cita</a>
+    <a href="{{ url_for('citas.lista_citas') }}" class="nav-tab {% if request.endpoint == 'citas.lista_citas' %}active{% endif %}">📋 Lista de citas</a>
+    <span class="nav-usuario">
+        {% if session.usuario %}
+            <span class="nav-correo small" title="Usuario con sesión activa">{{ session.usuario }}</span>
+            <form action="{{ url_for('auth.salir') }}" method="post" class="form-en-linea">
+                <button type="submit" class="btn btn-ghost btn-chica">Salir</button>
+            </form>
+        {% endif %}
+    </span>
 </nav>
 <main>
     {% with mensajes = get_flashed_messages(with_categories=true) %}

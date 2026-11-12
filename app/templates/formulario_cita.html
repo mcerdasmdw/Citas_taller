@@ -7,52 +7,77 @@
     <h2>Nueva cita de revisión</h2>
     <p class="small">Ingrese los datos recibidos por WhatsApp. Los campos personales (nombre, teléfono, placa, dirección) son opcionales y se guardan solo localmente.</p>
 
-    <form method="POST" action="{{ url_for('citas.crear_cita') }}">
-        <div class="form-row">
-            <div class="form-group">
-                <label class="required">Descripción del fallo</label>
-                <textarea name="fallo" required placeholder="Ej: El carro hace ruido al frenar">{{ request.form.fallo or '' }}</textarea>
-            </div>
-            <div class="form-group">
-                <label class="required">Modalidad</label>
-                <select name="modalidad" required>
-                    <option value="">Seleccione...</option>
-                    <option value="taller" {% if request.form.modalidad == 'taller' %}selected{% endif %}>Taller</option>
-                    <option value="domicilio" {% if request.form.modalidad == 'domicilio' %}selected{% endif %}>Domicilio</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="required">Fecha de la cita</label>
-                <input type="date" name="fecha" required value="{{ request.form.fecha or '' }}">
-            </div>
-            <div class="form-group">
-                <label>Hora (opcional, 07:00–16:00)</label>
-                <input type="time" name="hora" value="{{ request.form.hora or '' }}">
+    <form method="POST" action="{{ url_for('citas.crear_cita') }}" id="form-nueva-cita">
+
+        <div class="seccion-form">
+            <h3><span class="seccion-icono" aria-hidden="true">👤</span> Cliente</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cliente_nombre">Nombre del cliente (opcional)</label>
+                    <input type="text" id="cliente_nombre" name="cliente_nombre" placeholder="Cliente" value="{{ request.form.cliente_nombre or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="cliente_telefono">Teléfono (opcional)</label>
+                    <input type="tel" id="cliente_telefono" name="cliente_telefono" placeholder="+506 0000-0000" value="{{ request.form.cliente_telefono or '' }}">
+                </div>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Nombre del cliente (opcional)</label>
-                <input type="text" name="cliente_nombre" placeholder="Cliente" value="{{ request.form.cliente_nombre or '' }}">
+        <div class="seccion-form">
+            <h3><span class="seccion-icono" aria-hidden="true">🚗</span> Carro y fallo</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="carro_descripcion">Descripción del carro (opcional)</label>
+                    <input type="text" id="carro_descripcion" name="carro_descripcion" placeholder="Toyota Corolla 2015" value="{{ request.form.carro_descripcion or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="placa">Placa (opcional)</label>
+                    <input type="text" id="placa" name="placa" placeholder="PRB001" value="{{ request.form.placa or '' }}">
+                </div>
             </div>
             <div class="form-group">
-                <label>Teléfono (opcional)</label>
-                <input type="tel" name="cliente_telefono" placeholder="+506 0000-0000" value="{{ request.form.cliente_telefono or '' }}">
-            </div>
-            <div class="form-group">
-                <label>Descripción del carro (opcional)</label>
-                <input type="text" name="carro_descripcion" placeholder="Toyota Corolla 2015" value="{{ request.form.carro_descripcion or '' }}">
-            </div>
-            <div class="form-group">
-                <label>Placa (opcional)</label>
-                <input type="text" name="placa" placeholder="PRB001" value="{{ request.form.placa or '' }}">
+                <label for="fallo" class="required">Descripción del fallo</label>
+                <textarea id="fallo" name="fallo" required placeholder="Ej: El carro hace ruido al frenar">{{ request.form.fallo or '' }}</textarea>
             </div>
         </div>
 
-        <div class="form-group">
-            <label id="label-direccion">Dirección (obligatoria si es domicilio)</label>
-            <input type="text" name="direccion" id="direccion" placeholder="Dirección de visita" value="{{ request.form.direccion or '' }}">
+        <div class="seccion-form">
+            <h3><span class="seccion-icono" aria-hidden="true">🗓️</span> Modalidad y fecha</h3>
+            <fieldset class="tarjetas-fieldset">
+                <legend class="required">Modalidad</legend>
+                <div class="tarjetas-modalidad">
+                    <label class="tarjeta-modalidad">
+                        <input type="radio" name="modalidad" value="taller" required {% if request.form.modalidad == 'taller' %}checked{% endif %}>
+                        <span class="tm-cuerpo">
+                            <span class="tm-icono" aria-hidden="true">🔧</span>
+                            <span class="tm-titulo">Taller</span>
+                            <span class="tm-nota">Hasta 2 carros por día</span>
+                        </span>
+                    </label>
+                    <label class="tarjeta-modalidad">
+                        <input type="radio" name="modalidad" value="domicilio" required {% if request.form.modalidad == 'domicilio' %}checked{% endif %}>
+                        <span class="tm-cuerpo">
+                            <span class="tm-icono" aria-hidden="true">🏠</span>
+                            <span class="tm-titulo">Domicilio</span>
+                            <span class="tm-nota">Una visita ocupa el día</span>
+                        </span>
+                    </label>
+                </div>
+            </fieldset>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha" class="required">Fecha de la cita</label>
+                    <input type="date" id="fecha" name="fecha" required value="{{ request.form.fecha or request.args.fecha or '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="hora">Hora (opcional, 07:00–16:00)</label>
+                    <input type="time" id="hora" name="hora" value="{{ request.form.hora or '' }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="direccion" id="label-direccion">Dirección (obligatoria si es domicilio)</label>
+                <input type="text" name="direccion" id="direccion" placeholder="Dirección de visita" value="{{ request.form.direccion or '' }}">
+            </div>
         </div>
 
         <div style="margin-top:1rem;">
@@ -63,12 +88,13 @@
 </div>
 
 <script>
-    const selectModalidad = document.querySelector('select[name="modalidad"]');
+    const formCita = document.getElementById('form-nueva-cita');
     const inputDireccion = document.getElementById('direccion');
     const labelDireccion = document.getElementById('label-direccion');
 
     function actualizarDireccion() {
-        const esDomicilio = selectModalidad && selectModalidad.value === 'domicilio';
+        const marcada = formCita.querySelector('input[name="modalidad"]:checked');
+        const esDomicilio = marcada && marcada.value === 'domicilio';
         if (esDomicilio) {
             inputDireccion.required = true;
             labelDireccion.textContent = 'Dirección (obligatoria para domicilio) *';
@@ -78,26 +104,26 @@
         }
     }
 
-    if (selectModalidad) {
-        selectModalidad.addEventListener('change', actualizarDireccion);
-        actualizarDireccion();
-    }
+    formCita.querySelectorAll('input[name="modalidad"]').forEach(function (radio) {
+        radio.addEventListener('change', actualizarDireccion);
+    });
+    actualizarDireccion();
 </script>
 
-<div class="card">
+<div class="card" id="propuesta">
     <h2>Preparar con IA</h2>
     <p class="small">El agente de IA interpreta solo información autorizada (sin datos personales) y prepara una propuesta que usted podrá revisar. No confirma la cita automáticamente.</p>
 
     <form method="POST" action="{{ url_for('ia.preparar') }}">
         <div class="form-group">
-            <label>Solicitud del cliente (texto de WhatsApp, sin nombres ni teléfonos)</label>
-            <textarea name="texto_solicitud" required placeholder="Ej: El carro hace ruido al frenar, puede llevarlo el miércoles">{{ session.texto_solicitud or '' }}</textarea>
+            <label for="texto_solicitud">Solicitud del cliente (texto de WhatsApp, sin nombres ni teléfonos)</label>
+            <textarea id="texto_solicitud" name="texto_solicitud" required placeholder="Ej: El carro hace ruido al frenar, puede llevarlo el miércoles">{{ session.texto_solicitud or '' }}</textarea>
             <p class="small">Recuerde: no incluya nombres, teléfonos, placas ni direcciones.</p>
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label>Modalidad (si está indicada)</label>
-                <select name="modalidad">
+                <label for="modalidad_ia">Modalidad (si está indicada)</label>
+                <select id="modalidad_ia" name="modalidad">
                     <option value="">No indicado</option>
                     <option value="taller">Taller</option>
                     <option value="domicilio">Domicilio</option>
