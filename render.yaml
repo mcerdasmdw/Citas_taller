@@ -13,14 +13,19 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:////data/citas.db
+        # Ruta relativa: SQLite queda en instance/citas.db (filesystem del plan Free).
+        # Si pagas un plan con disco persistente, usa "sqlite:////data/citas.db"
+        # (4 barras) y descomenta el bloque disk: de abajo.
+        value: sqlite:///citas.db
       - key: IA_PROVIDER
         value: simulado
       - key: IA_API_KEY
         sync: false
       - key: IA_MODEL
         value: pendiente
-    disk:
-      name: citas-data
-      mountPath: /data
-      sizeGB: 1
+    # Los persistent disks NO estan disponibles en el plan free de Render.
+    # Para mantener datos entre despliegues, paga un plan y descomenta:
+    # disk:
+    #   name: citas-data
+    #   mountPath: /data
+    #   sizeGB: 1

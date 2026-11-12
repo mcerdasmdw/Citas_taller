@@ -24,6 +24,16 @@ def create_app():
     db_path = os.path.join(app.instance_path, "citas.db")
     db_uri = os.environ.get("DATABASE_URL", "sqlite:///" + db_path)
 
+    # Si DATABASE_URL apunta a un archivo SQLite, asegurar que exista su carpeta
+    # (Render usa rutas relativas a instance/ o rutas absolutas a un disco montado)
+    if db_uri.startswith("sqlite:///"):
+        raw = db_uri[len("sqlite:///"):].replace("\\", "/")
+        if raw and not raw.startswith(":memory:"):
+            full = raw if (raw.startswith("/") or os.path.isabs(raw)) else os.path.join(app.instance_path, raw)
+            parent = os.path.dirname(full)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+
     # Configuración base
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY"),
