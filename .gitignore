@@ -10,6 +10,7 @@ instance/
 .pytest_cache/
 .vscode/
 .idea/
-uv.lock
+# uv.lock se sube para builds reproducibles en Render
+# uv.lock
 insumos/
 contexto/

@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: citas-taller
+    env: python
+    plan: free
+    buildCommand: uv sync
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:////data/citas.db
+      - key: IA_PROVIDER
+        value: simulado
+      - key: IA_API_KEY
+        sync: false
+      - key: IA_MODEL
+        value: pendiente
+    disk:
+      name: citas-data
+      mountPath: /data
+      sizeGB: 1
